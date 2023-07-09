@@ -1,6 +1,6 @@
 {
   "name": "bodysegmentation-video",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "devDependencies": {
     "@tensorflow/tfjs-backend-webgl": "^3.13.0",
     "@tensorflow/tfjs-converter": "^3.13.0",
@@ -14,6 +14,15 @@
     "rollup": "^2.73.0",
     "typescript": "~4.6.4"
   },
+  "files": [
+    "/index.*",
+    "/baseplayer.*",
+    "/events.*",
+    "/video-element.*",
+    "/bodysegmentation-video.*",
+    "/tensorflow",
+    "/libs"
+  ],
   "scripts": {
     "build": "node_modules/.bin/tsc",
     "build-watch": "node_modules/.bin/tsc --watch",
