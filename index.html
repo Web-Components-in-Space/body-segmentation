@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="module" src="index.js"></script>
+    <style>
+        bodysegmentation-video {
+            width: 640px;
+            height: 480px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <bodysegmentation-video solutionPath="./libs/selfie_segmentation.js" useCamera></bodysegmentation-video>
+    <button>Play</button>
+
+    <script>
+        let texture = new Image();
+        const textureCanvas = new OffscreenCanvas(1280, 720);
+        texture.onload = () => {
+            const ctx = textureCanvas.getContext('2d');
+            ctx?.drawImage(texture, 0, 0, 1280, 720);
+        };
+        texture.src = './sampleassets/wallpaper.jpg';
+
+        const segmenter = document.body.querySelector('bodysegmentation-video');
+        segmenter.addEventListener('onSegment', (e) => {
+            e.toBinaryMask(
+                {r:0, g:0, b:0, a: 0},
+                {r:0, g:0, b:0, a: 255},
+                true, .1).then((maskImg) => {
+                const maskBlurAmount = 10;
+                if (segmenter.canvasContext) {
+                    if (maskImg) {
+                        const mask = new OffscreenCanvas(segmenter.naturalSize.width, segmenter.naturalSize.height);
+                        mask.width = maskImg.width;
+                        mask.height = maskImg.height;
+                        const maskCtx = mask.getContext('2d');
+                        if (maskCtx) {
+                            maskCtx.putImageData(maskImg, 0, 0);
+                            maskCtx.filter = `blur(${maskBlurAmount}px)`;
+                            maskCtx.drawImage(mask, 0, 0, segmenter.naturalSize.width, segmenter.naturalSize.height);
+                        }
+                        segmenter.canvasContext.clearRect(0, 0, segmenter.videoBounds.width, segmenter.videoBounds.height);
+                        segmenter.canvasContext.drawImage(mask, 0, 0, segmenter.videoBounds.width, segmenter.videoBounds.height);
+                        segmenter.canvasContext.globalCompositeOperation = 'source-out';
+                        segmenter.canvasContext.drawImage(textureCanvas, 0, 0, segmenter.videoBounds.width, segmenter.videoBounds.height);
+                        segmenter.canvasContext.globalCompositeOperation = 'source-over';
+                    }
+                }
+            })
+        });
+        document.body.querySelector('button').addEventListener('click', () => {
+            segmenter.play();
+        });
+    </script>
+</body>
+</html>

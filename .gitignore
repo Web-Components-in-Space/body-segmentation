@@ -1,3 +1,13 @@
+/libs
+/tensorflow
+/baseplayer.*
+/bodysegmentation-video.*
+/events.*
+/index.*
+/video-element.*
+
+
+
 # Logs
 logs
 *.log
