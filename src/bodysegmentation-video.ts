@@ -1,7 +1,7 @@
 import {load, processFrame} from './tensorflow/bodysegmentation.js';
 import { VideoElement } from './video-element.js';
 // @ts-ignore
-import { bodysegmentation } from '../libs/body-segmentation-bundle.js';
+import { bodysegmentation } from './libs/body-segmentation-bundle.js';
 
 export type Color = { r: Number; g: Number; b: Number; a: Number };
 
