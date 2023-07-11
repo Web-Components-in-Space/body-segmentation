@@ -82,10 +82,6 @@ export class VideoElement extends BasePlayer {
                 video, canvas {
                     position: absolute;
                 }
-                    
-                canvas {
-                    width: 100%;
-                }
             </style>
             <video playsinline></video>
             <canvas></canvas>`;
@@ -111,7 +107,6 @@ export class VideoElement extends BasePlayer {
 
         this.videoEl.onpause = () => {
             this._isPlaying = false;
-            this.updateControls();
             clearInterval(this.timer as number);
             this.dispatchEvent(new Event(Events.VIDEO_PAUSE, { bubbles: true, composed: true }));
         }
@@ -130,13 +125,11 @@ export class VideoElement extends BasePlayer {
                 }, 100);
                 this.dispatchEvent(new Event(Events.VIDEO_PLAY, { bubbles: true, composed: true }));
             }
-            this.updateControls();
         }
     }
 
     protected onTimerUpdate() {
         this._currentTime = this.videoEl.currentTime * 1000;
-        this.updateControls();
         this.dispatchEvent(new Event(Events.TIME_UPDATE, { bubbles: true, composed: true }));
     }
 
@@ -154,7 +147,6 @@ export class VideoElement extends BasePlayer {
         } else {
             this.play();
         }
-        this.updateControls();
     }
 
     public override step(frames: number) {
@@ -197,7 +189,6 @@ export class VideoElement extends BasePlayer {
         this.resize();
         this.dispatchEvent(new Event(Events.METADATA, { bubbles: true, composed: true }));
         this._duration = this.videoEl.duration * 1000;
-        this.updateControls();
     }
 
     protected override connectedCallback() {

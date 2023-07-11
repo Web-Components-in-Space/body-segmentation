@@ -1,4 +1,3 @@
-// import { PlaybackEvent } from './playbackevent';
 import { Events } from './events.js';
 
 export interface Bounds {
@@ -45,11 +44,6 @@ export interface Player extends PlayerState {
 }
 
 export class BasePlayer extends HTMLElement implements Player {
-    /* constructor() {
-        super();
-        this.addEventListener(PlaybackEvent.Type, this.handleControlsEvent as any);
-    } */
-
     protected connectedCallback() {
         this.dispatchEvent(new Event(Events.READY, { composed: true, bubbles: true } ));
     }
@@ -223,70 +217,4 @@ export class BasePlayer extends HTMLElement implements Player {
     protected seekTo(_ms: number) {}
 
     protected changePlaybackRate(_rate: number) {}
-
-    protected updateControls() {
-        const slot = this.shadowRoot?.querySelector('slot');
-        if (slot) {
-            slot.assignedElements().forEach( (slotted: any) => {
-                const controls: PlayerState = slotted;
-                if (controls) {
-                    controls.isLooping = this.isLooping;
-                    controls.isPlaying = this.isPlaying;
-                    controls.currentTime = this.currentTime;
-                    controls.duration = this.duration;
-                    controls.recordingDuration = this.recordingDuration;
-                    controls.isRecording = this.isRecording;
-                    controls.isAudioRecording = this.isAudioRecording;
-                    controls.playbackRate = this.playbackRate;
-                    controls.canRecord = this.canRecord;
-                }
-            });
-        }
-    }
-
-    /* protected handleControlsEvent(e: PlaybackEvent) {
-        switch (e.action) {
-            case PlaybackEvent.TOGGLE_PLAYBACK:
-                if (this.isPlaying) {
-                    this.pause();
-                } else {
-                    this.play();
-                }
-                this.updateControls();
-                break;
-
-            case PlaybackEvent.LOOP:
-                this.isLooping = !e.state.isLooping;
-                this.updateControls();
-                break;
-
-            case PlaybackEvent.STEP_FORWARD:
-                this.pause();
-                this.step(1);
-                break;
-
-            case PlaybackEvent.STEP_BACKWARD:
-                this.pause();
-                this.step(-1);
-                break;
-
-            case PlaybackEvent.TIMELINE_SCRUB:
-                this.currentTime = e.state.currentTime;
-                break;
-
-            case PlaybackEvent.PLAYBACK_RATE_UPDATE:
-                this.playbackRate = e.state.playbackRate;
-                break;
-        }
-    } */
-
-    public static formatTime(ms: number | undefined) {
-        if (ms) {
-            const seconds = Math.floor(ms / 1000);
-            const minutes = Math.floor(seconds / 60);
-            return `${minutes.toString().length === 2 ? minutes.toString() : '0' + minutes.toString()}:${(seconds % 60).toString().length === 2 ? (seconds % 60).toString() : '0' + (seconds % 60).toString()}`;
-        } else {
-            return '00:00';
-        }
-    }
 }
