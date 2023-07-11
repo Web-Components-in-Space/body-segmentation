@@ -13,8 +13,8 @@
     </style>
 </head>
 <body>
-    <bodysegmentation-video solutionPath="./libs/selfie_segmentation.js" useCamera></bodysegmentation-video>
-    <button>Play</button>
+    <bodysegmentation-video active solutionPath="./libs/selfie_segmentation.js" useCamera></bodysegmentation-video>
+    <button>Toggle Active</button>
 
     <script>
         let texture = new Image();
@@ -44,16 +44,20 @@
                             maskCtx.drawImage(mask, 0, 0, segmenter.naturalSize.width, segmenter.naturalSize.height);
                         }
                         segmenter.canvasContext.clearRect(0, 0, segmenter.videoBounds.width, segmenter.videoBounds.height);
-                        segmenter.canvasContext.drawImage(mask, 0, 0, segmenter.videoBounds.width, segmenter.videoBounds.height);
-                        segmenter.canvasContext.globalCompositeOperation = 'source-out';
-                        segmenter.canvasContext.drawImage(textureCanvas, 0, 0, segmenter.videoBounds.width, segmenter.videoBounds.height);
-                        segmenter.canvasContext.globalCompositeOperation = 'source-over';
+
+                        if (segmenter.active) {
+                            segmenter.canvasContext.drawImage(mask, 0, 0, segmenter.videoBounds.width, segmenter.videoBounds.height);
+                            segmenter.canvasContext.globalCompositeOperation = 'source-out';
+                            segmenter.canvasContext.drawImage(textureCanvas, 0, 0, segmenter.videoBounds.width, segmenter.videoBounds.height);
+                            segmenter.canvasContext.globalCompositeOperation = 'source-over';
+                        }
                     }
                 }
             })
         });
         document.body.querySelector('button').addEventListener('click', () => {
-            segmenter.play();
+            segmenter.active = !segmenter.active;
+            segmenter.canvasContext.clearRect(0, 0, segmenter.videoBounds.width, segmenter.videoBounds.height);
         });
     </script>
 </body>

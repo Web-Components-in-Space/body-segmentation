@@ -23,6 +23,27 @@ export class SegmentationEvent extends Event {
 
 }
 export class BodySegmentationVideo extends VideoElement {
+    static override get observedAttributes() {
+        return [...super.observedAttributes, 'active'];
+    }
+
+    /**
+     * is segmentation processing active?
+     */
+    protected _active: boolean = this.hasAttribute('active');
+
+    public get active() {
+        return this._active;
+    }
+
+    public set active(val: boolean) {
+        if (val) {
+            this.setAttribute('active', '');
+        } else {
+            this.removeAttribute('active');
+        }
+    }
+
     override async onMetadata() {
         super.onMetadata();
 
@@ -34,16 +55,27 @@ export class BodySegmentationVideo extends VideoElement {
             modelType: 'general'
         }
         await load(segmenterConfig);
-        await this.poseDetectionFrame();
+        if (this.active) {
+            await this.poseDetectionFrame();
+        }
     }
 
     async poseDetectionFrame() {
-        if (this.isPlaying && this.videoEl.readyState > 1) {
+        if (this.isPlaying && this.videoEl.readyState > 1 && this.active) {
             const result = await processFrame(this);
             const e = new SegmentationEvent(result);
             this.dispatchEvent(e);
         }
         requestAnimationFrame( () => this.poseDetectionFrame());
+    }
+
+    protected override async attributeChangedCallback(name: string, oldval: string, newval: string) {
+        await super.attributeChangedCallback(name, oldval, newval);
+        switch (name) {
+            case 'active':
+                this._active = this.hasAttribute('active');
+                break;
+        }
     }
 }
 
