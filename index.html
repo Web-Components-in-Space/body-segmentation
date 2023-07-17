@@ -9,14 +9,16 @@
             width: 640px;
             height: 480px;
             display: inline-block;
+            background: linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(253,187,45,1) 100%);
         }
     </style>
 </head>
 <body>
-    <bodysegmentation-video active solutionPath="./libs/selfie_segmentation.js" useCamera></bodysegmentation-video>
+    <bodysegmentation-video active hidevideo solutionPath="./libs/selfie_segmentation.js" useCamera></bodysegmentation-video>
     <button>Toggle Active</button>
 
     <script>
+        const MODE = "punch-mask";
         let texture = new Image();
         const textureCanvas = new OffscreenCanvas(1280, 720);
         texture.onload = () => {
@@ -43,13 +45,19 @@
                             maskCtx.filter = `blur(${maskBlurAmount}px)`;
                             maskCtx.drawImage(mask, 0, 0, segmenter.naturalSize.width, segmenter.naturalSize.height);
                         }
-                        segmenter.canvasContext.clearRect(0, 0, segmenter.videoBounds.width, segmenter.videoBounds.height);
+                        segmenter.canvasContext.drawImage(segmenter.videoEl, 0, 0);
 
-                        if (segmenter.active) {
+                        // Use below to clear the entire rect if we aren't showing the video underneath
+                        //segmenter.canvasContext.clearRect(0, 0, segmenter.videoBounds.width, segmenter.videoBounds.height);
+
+                        if (segmenter.active && MODE === 'composite') {
                             segmenter.canvasContext.drawImage(mask, 0, 0, segmenter.videoBounds.width, segmenter.videoBounds.height);
                             segmenter.canvasContext.globalCompositeOperation = 'source-out';
                             segmenter.canvasContext.drawImage(textureCanvas, 0, 0, segmenter.videoBounds.width, segmenter.videoBounds.height);
                             segmenter.canvasContext.globalCompositeOperation = 'source-over';
+                        } else {
+                            segmenter.canvasContext.globalCompositeOperation = 'destination-atop';
+                            segmenter.canvasContext.drawImage(mask, 0, 0, segmenter.videoBounds.width, segmenter.videoBounds.height);
                         }
                     }
                 }

@@ -79,6 +79,9 @@ export class VideoElement extends BasePlayer {
                     display: inline-block;
                 }
                 
+                :host([hidevideo]) video {
+                    display: none;
+                }
                 video, canvas {
                     position: absolute;
                 }
