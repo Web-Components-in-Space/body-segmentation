@@ -18,7 +18,7 @@
     <button>Toggle Active</button>
 
     <script>
-        const MODE = "punch-mask";
+        const MODE = "punch-mask"; //"composite";
         let texture = new Image();
         const textureCanvas = new OffscreenCanvas(1280, 720);
         texture.onload = () => {
@@ -45,19 +45,17 @@
                             maskCtx.filter = `blur(${maskBlurAmount}px)`;
                             maskCtx.drawImage(mask, 0, 0, segmenter.naturalSize.width, segmenter.naturalSize.height);
                         }
-                        segmenter.canvasContext.drawImage(segmenter.videoEl, 0, 0);
-
-                        // Use below to clear the entire rect if we aren't showing the video underneath
-                        //segmenter.canvasContext.clearRect(0, 0, segmenter.videoBounds.width, segmenter.videoBounds.height);
+                        segmenter.canvasContext.clearRect(0, 0, segmenter.videoBounds.width, segmenter.videoBounds.height);
+                        segmenter.canvasContext.drawImage(segmenter.videoElement, 0, 0);
 
                         if (segmenter.active && MODE === 'composite') {
                             segmenter.canvasContext.drawImage(mask, 0, 0, segmenter.videoBounds.width, segmenter.videoBounds.height);
-                            segmenter.canvasContext.globalCompositeOperation = 'source-out';
+                            segmenter.canvasContext.globalCompositeOperation = 'destination-atop';
                             segmenter.canvasContext.drawImage(textureCanvas, 0, 0, segmenter.videoBounds.width, segmenter.videoBounds.height);
-                            segmenter.canvasContext.globalCompositeOperation = 'source-over';
                         } else {
                             segmenter.canvasContext.globalCompositeOperation = 'destination-atop';
                             segmenter.canvasContext.drawImage(mask, 0, 0, segmenter.videoBounds.width, segmenter.videoBounds.height);
+                            segmenter.canvasContext.globalCompositeOperation = 'source-over';
                         }
                     }
                 }
