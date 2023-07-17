@@ -74,6 +74,9 @@ export class BodySegmentationVideo extends VideoElement {
         switch (name) {
             case 'active':
                 this._active = this.hasAttribute('active');
+                if (this._active) {
+                    this.poseDetectionFrame();
+                }
                 break;
         }
     }
