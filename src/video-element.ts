@@ -75,10 +75,6 @@ export class VideoElement extends BasePlayer {
                     background-color: black;
                 }
                 
-                :host(.connected) {
-                    display: inline-block;
-                }
-                
                 :host([hidevideo]) video {
                     display: none;
                 }
@@ -196,7 +192,6 @@ export class VideoElement extends BasePlayer {
 
     protected override connectedCallback() {
         super.connectedCallback();
-        this.classList.toggle('connected', true );
         this.isComponentMounted = true;
         // delay loading giving plenty of time to resize and get settled
         // this avoids a resize flash from video sizing itself, and also incorrect size being given to pose detect during launch
