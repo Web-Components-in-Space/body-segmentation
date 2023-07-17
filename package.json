@@ -1,6 +1,6 @@
 {
   "name": "bodysegmentation-video",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "devDependencies": {
     "@tensorflow/tfjs-backend-webgl": "^3.13.0",
     "@tensorflow/tfjs-converter": "^3.13.0",
