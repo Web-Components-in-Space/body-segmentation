@@ -282,12 +282,12 @@ export class VideoElement extends BasePlayer {
         let letterBoxLeft: number;
         let letterBoxTop: number;
         if (componentAspectRatio < this.aspectRatio) {
-            mediaScaledHeight = bounds.width / this.aspectRatio;
-            letterBoxTop = bounds.height/2 - mediaScaledHeight/2;
+            mediaScaledHeight = Math.round(bounds.width / this.aspectRatio);
+            letterBoxTop = Math.round(bounds.height/2 - mediaScaledHeight/2);
             letterBoxLeft = 0;
         } else if (componentAspectRatio > this.aspectRatio) {
-            mediaScaledWidth = bounds.height * this.aspectRatio;
-            letterBoxLeft = bounds.width/2 - mediaScaledWidth/2;
+            mediaScaledWidth = Math.round(bounds.height * this.aspectRatio);
+            letterBoxLeft = Math.round(bounds.width/2 - mediaScaledWidth/2);
             letterBoxTop = 0;
         } else {
             letterBoxTop = 0;
