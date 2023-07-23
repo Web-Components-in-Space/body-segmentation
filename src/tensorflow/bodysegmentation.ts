@@ -16,6 +16,10 @@ export const load = async function(cfg: any) {
 export const processFrame = async function (source: VideoElement) {
     const offcanvas = new OffscreenCanvas(source.naturalSize.width, source.naturalSize.height);
     const offctx = offcanvas.getContext('2d');
-    offctx?.drawImage(source.videoElement, 0, 0, source.naturalSize.width, source.naturalSize.height)
-    return await segmenter.segmentPeople(offcanvas);
+    offctx?.drawImage(source.videoElement, 0, 0, source.naturalSize.width, source.naturalSize.height);
+    if (segmenter?.segmentPeople) {
+        return await segmenter.segmentPeople(offcanvas);
+    } else {
+        return undefined;
+    }
 }

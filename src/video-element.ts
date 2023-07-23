@@ -78,10 +78,12 @@ export class VideoElement extends BasePlayer {
                 :host([hidevideo]) video {
                     display: none;
                 }
-                video, canvas {
+                
+                video, canvas, ::slotted(*) {
                     position: absolute;
                 }
             </style>
+            <slot></slot>
             <video playsinline></video>
             <canvas></canvas>`;
         }
@@ -277,8 +279,8 @@ export class VideoElement extends BasePlayer {
         const componentAspectRatio = bounds.width/bounds.height;
 
         // calculate letterbox borders
-        let letterBoxLeft;
-        let letterBoxTop;
+        let letterBoxLeft: number;
+        let letterBoxTop: number;
         if (componentAspectRatio < this.aspectRatio) {
             mediaScaledHeight = bounds.width / this.aspectRatio;
             letterBoxTop = bounds.height/2 - mediaScaledHeight/2;
@@ -312,6 +314,13 @@ export class VideoElement extends BasePlayer {
             this.canvasEl.style.top = `${letterBoxTop}px`;
             this.canvasCtx = this.canvasEl.getContext('2d') as CanvasRenderingContext2D;
         }
+
+        this.shadowRoot?.querySelector('slot')?.assignedElements().forEach( (slotted: any) => {
+            slotted.style.width = `${mediaScaledWidth}px`;
+            slotted.style.height = `${mediaScaledHeight}px`;
+            slotted.style.left = `${letterBoxLeft}px`;
+            slotted.style.top = `${letterBoxTop}px`;
+        });
     }
 
     protected disconnectedCallback() {

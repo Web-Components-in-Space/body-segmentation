@@ -63,8 +63,10 @@ export class BodySegmentationVideo extends VideoElement {
     async poseDetectionFrame() {
         if (this.isPlaying && this.videoEl.readyState > 1 && this.active) {
             const result = await processFrame(this);
-            const e = new SegmentationEvent(result);
-            this.dispatchEvent(e);
+            if (result) {
+                const e = new SegmentationEvent(result);
+                this.dispatchEvent(e);
+            }
         }
         requestAnimationFrame( () => this.poseDetectionFrame());
     }
