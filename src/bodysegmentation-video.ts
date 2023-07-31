@@ -67,8 +67,14 @@ export class BodySegmentationVideo extends VideoElement {
                 const e = new SegmentationEvent(result);
                 this.dispatchEvent(e);
             }
+            if (this.hasAttribute('segmentinterval')) {
+                setTimeout(() => {
+                    this.poseDetectionFrame();
+                }, Number(this.getAttribute('segmentinterval')));
+            } else {
+                requestAnimationFrame( () => this.poseDetectionFrame());
+            }
         }
-        requestAnimationFrame( () => this.poseDetectionFrame());
     }
 
     protected override async attributeChangedCallback(name: string, oldval: string, newval: string) {

@@ -17,7 +17,7 @@ export class VideoElement extends BasePlayer {
     /**
      * video stream
      */
-    protected stream?: MediaStream;
+    protected _stream?: MediaStream;
 
     /**
      * timer for driving playback status
@@ -98,7 +98,7 @@ export class VideoElement extends BasePlayer {
 
         this.videoEl.onloadedmetadata = () => this.onMetadata();
         this.videoEl.onloadeddata = () => {
-            if (this.hasAttribute('autoplay') || this.hasAttribute('usecamera')) {
+            if (this.hasAttribute('autoplay') || this.hasAttribute('usecamera') || this.hasAttribute('manualstream')) {
                 if (this.hasAttribute('mute')) {
                     this.videoEl.muted = true;
                 }
@@ -174,6 +174,16 @@ export class VideoElement extends BasePlayer {
         };
     }
 
+    public set stream(stream: MediaStream) {
+        this._stream = stream;
+        this.videoEl.srcObject = this._stream;
+        if (this.hasAttribute('mute')) {
+            this.videoEl.muted = true;
+        }
+        this.setAttribute('manualstream', '');
+        this.dispatchEvent(new Event(Events.VIDEO_SOURCE_CHANGED, { bubbles: true, composed: true }));
+    }
+
     /**
      * aspect ratio of video
      */
@@ -203,29 +213,33 @@ export class VideoElement extends BasePlayer {
     protected async loadCurrentSource() {
         let sourceChange = false;
         if (this.hasAttribute('src')) {
+            this.removeAttribute('manualstream');
             this.videoEl.srcObject = null;
             this.videoEl.src = this.getAttribute('src') || '';
 
-            if (this.stream) {
-                this.stream.getTracks()[0].stop();
-                this.stream = undefined;
+            if (this._stream) {
+                this._stream.getTracks()[0].stop();
+                this._stream = undefined;
             }
             sourceChange = true;
         }
 
         if (this.hasAttribute('usecamera')) {
-            this.stream = await navigator.mediaDevices.getUserMedia({
-                'audio': true,
+            this.removeAttribute('manualstream');
+            this._stream = await navigator.mediaDevices.getUserMedia({
+                'audio': false,
                 'video': true
             });
-            this.videoEl.srcObject = this.stream;
-            this.videoEl.muted = true;
+            this.videoEl.srcObject = this._stream;
+            if (this.hasAttribute('mute')) {
+                this.videoEl.muted = true;
+            }
             sourceChange = true;
         } else if (!this.hasAttribute('usecamera') && this.videoEl.srcObject) {
             this.videoEl.srcObject = null;
-            if (this.stream) {
-                this.stream.getTracks()[0].stop();
-                this.stream = undefined;
+            if (this._stream) {
+                this._stream.getTracks()[0].stop();
+                this._stream = undefined;
             }
             sourceChange = true;
         }
@@ -326,8 +340,8 @@ export class VideoElement extends BasePlayer {
     protected disconnectedCallback() {
         clearInterval(this.timer as number);
         this.isComponentMounted = false;
-        if (this.stream) {
-            const tracks = this.stream.getTracks();
+        if (this._stream) {
+            const tracks = this._stream.getTracks();
             tracks.forEach( track => {
                 track.stop();
             });
