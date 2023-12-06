@@ -13,10 +13,12 @@ export const load = async function(cfg: any) {
     segmenter = await bodysegmentation.createSegmenter(model, cfg);
 }
 
-export const processFrame = async function (source: VideoElement) {
-    const offcanvas = new OffscreenCanvas(source.naturalSize.width, source.naturalSize.height);
+export const processFrame = async function (source: VideoElement | ImageBitmap | HTMLImageElement | ImageData) {
+    const width = ((source as VideoElement).naturalSize?.width || (source as ImageBitmap | HTMLImageElement | ImageData).width );
+    const height = ((source as VideoElement).naturalSize?.height || (source as ImageBitmap | HTMLImageElement | ImageData).height );
+    const offcanvas = new OffscreenCanvas(width, height);
     const offctx = offcanvas.getContext('2d');
-    offctx?.drawImage(source.videoElement, 0, 0, source.naturalSize.width, source.naturalSize.height);
+    offctx?.drawImage((source as VideoElement).videoElement || source, 0, 0, width, height);
     if (segmenter?.segmentPeople) {
         return await segmenter.segmentPeople(offcanvas);
     } else {
