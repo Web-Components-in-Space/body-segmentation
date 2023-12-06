@@ -20,7 +20,6 @@ export class SegmentationEvent extends Event {
                        foregroundMaskValues?: number[] ) {
         return bodysegmentation.toBinaryMask(this.people, foreground, background, drawContour, foregroundThreshold, foregroundMaskValues);
     }
-
 }
 export class BodySegmentationVideo extends VideoElement {
     static override get observedAttributes() {
