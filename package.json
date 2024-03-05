@@ -12,7 +12,8 @@
     "rollup-plugin-node-polyfills": "^0.2.1",
     "rollup-plugin-copy": "^3.4.0",
     "rollup": "^2.73.0",
-    "typescript": "~4.6.4"
+    "typescript": "~4.6.4",
+    "@web/dev-server": "^0.1.31"
   },
   "files": [
     "/index.*",
@@ -24,6 +25,7 @@
     "/libs"
   ],
   "scripts": {
+    "serve": "tsc --watch & wds --watch --node-resolve --open",
     "build": "node_modules/.bin/tsc",
     "build-watch": "node_modules/.bin/tsc --watch",
     "lib-prebundle": "./node_modules/.bin/rollup -c src/libs/tf-rollup-cfg.js"
